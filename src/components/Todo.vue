@@ -1,13 +1,13 @@
 <template>
-	<div class="todo-container">
+	<div class="create-todo-container">
 		<div class="col">
-			<input type="text" v-model="todoName" placeholder="Todo"/>
+			<input class="w-100" type="text" v-model="todoName" placeholder="Todo"/>
 		</div>
 		<div class="col">
-			<input type="number" v-model="hours" placeholder="Hours"/>
+			<input class="w-100" type="number" v-model="hours" placeholder="Hours"/>
 		</div>
 		<div class="col">
-			<select v-model="worker">
+			<select class="w-100" v-model="worker">
 				<option disabled value="">Select manager</option>
 				<option>A</option>
 				<option>B</option>
@@ -15,31 +15,35 @@
 			</select>
 		</div>
 		<div class="col-2">
-			<button type="submit" @click="addTodo()">submit</button>
+			<button class="w-100" type="submit" @click="addTodo()">submit</button>
 		</div>
 	</div>
-	<div class="" v-for="(todo, index) in todos" :key="index">
-		<div>
-			<input
-				type="checkbox"
-				v-model="todo.toggled"
-				true-value="true"
-				false-value="false" />
+	<div class="todo-container">
+		<div class="todo-line" v-for="(todo, index) in todos" :key="index">
+			<div>
+				<input
+					type="checkbox"
+					v-model="todo.toggled"
+					true-value="true"
+					false-value="false"/>
 
-			<span>{{todo.name}}</span>
-			<span>{{todo.hours}}</span>
-			<span>{{todo.worker}}</span>
-			<button type="submit" @click="updateTodo(index)">!!!Modifier!!!</button>
-			<button type="submit" @click="removeTodo(index)">X</button>
+				<span>{{ todo.name }}</span>
+				<span>{{ todo.hours }}</span>
+				<span>{{ todo.worker }}</span>
+				<button type="submit" @click="updateTodo(index)">!!!Modifier!!!</button>
+				<button type="submit" @click="removeTodo(index)">X</button>
+				<button type="submit" @click="changeStatusTodo(index, todoStatus.FINISHED)">X</button>
+			</div>
 		</div>
 	</div>
+
 	<div>
 		<button type="submit" @click="multiRemoveTodo()"> Remove all</button>
-		<div>Selected: {{this.todos.filter(todo => todo.toggled === "true").length}}</div>
+		<div>Selected: {{ this.todos.filter(todo => todo.toggled === "true").length }}</div>
 
 	</div>
 	<div>
-		<div>Todo Create: {{this.todos.length}}</div>
+		<div>Todo Create: {{ this.todos.length }}</div>
 
 	</div>
 </template>
@@ -59,6 +63,11 @@ export default {
 			hours: 0,
 			indexUpdateTodo: null,
 			todos: [],
+			todoStatus: {
+				ON_GOING: 'on going',
+				IN_PROGRESS: 'in progress',
+				FINISHED: 'finished'
+			},
 			incrementMultiRemoveTodo: 0
 		};
 	},
@@ -74,6 +83,7 @@ export default {
 				name: this.todoName,
 				worker: this.worker,
 				hours: this.hours,
+				status: this.todoStatus.ON_GOING,
 				toggled: false,
 			});
 		},
@@ -88,9 +98,7 @@ export default {
 		},
 		multiRemoveTodo() {
 			let todoToDel = []
-
 			for (let i = 0; i < this.todos.length; i++) {
-
 				if (this.todos[i].toggled) {
 					todoToDel.push(i)
 				}
@@ -103,27 +111,48 @@ export default {
 			}
 
 		},
-		updateIncrementMultiRemoveTodo(){
-			this.incrementMultiRemoveTodo = 0;
-			this.todos.forEach(todo => todo.toggled ? this.incrementMultiRemoveTodo++ : "" )
-			return this.incrementMultiRemoveTodo
-		},
+		changeStatusTodo(index, status) {
+			this.todos[index].status = status;
+		}
 
 	}
 }
 </script>
 
 <style scoped>
+.create-todo-container {
+	width: 1000px;
+	margin: auto;
+	margin-bottom: 50px;
+}
+
 .todo-container {
-	width: 900px;
+	margin: auto;
+	width: 1000px;
+	background-color: #2c3e50;
+	height: 700px;
+	max-height: 700px;
+	border-radius: 20px;
+	text-align: center;
+	overflow: auto;
+}
+.todo-line {
+	height: 35px;
+	background-color: rgba(0, 0, 0, 0.98);
+	width: 100%;
+	margin-bottom: 5px;
 	text-align: initial;
 }
 
 .col {
-	width: 200px;
-	margin-left: 20x;
-	margin-right: 20px;
+	width: 250px;
 	display: inline-block;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.w-100 {
+	width: 100%;
 }
 
 .col-2 {
